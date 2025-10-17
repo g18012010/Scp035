@@ -1,0 +1,177 @@
+﻿using HarmonyLib;
+using LabApi.Events.Arguments.PlayerEvents;
+using LabApi.Events.Arguments.Scp173Events;
+using LabApi.Events.Arguments.ServerEvents;
+using LabApi.Events.Handlers;
+using LabApi.Features.Wrappers;
+using LabApi.Loader.Features.Plugins;
+using MEC;
+using PlayerRoles;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+
+namespace Scp035
+{
+    internal class Plugin : Plugin<Config>
+    {
+        public override string Name => "Scp035";
+        public override string Description => "Adds SCP-035 to the game.";
+        public override string Author => "g18012010";
+        public override Version Version => new Version(1, 0);
+        public override Version RequiredApiVersion => new Version(1, 0, 0);
+
+        public static List<ushort> Scp035ItemSerials = new List<ushort>();
+
+        public static Plugin Instance { get; private set; }
+        private static Harmony Harmony;
+
+        public override void Enable()
+        {
+            Instance = this;
+
+            Harmony = new Harmony("SCP035");
+            Harmony.PatchAll();
+
+            ServerEvents.MapGenerated += OnMapGenerated;
+
+            PlayerEvents.ChangedRole += OnPlayerChangedRole;
+            PlayerEvents.Hurting += OnPlayerHurting;
+
+            PlayerEvents.PickingUpItem += OnPlayerPickingUpItem;
+            PlayerEvents.ChangedItem += OnPlayerChangedItem;
+            PlayerEvents.UsedItem += OnPlayerUsedItem;
+            PlayerEvents.DroppedItem += OnPlayerDroppedItem;
+
+            PlayerEvents.Death += OnPlayerDeath;
+
+            Scp173Events.AddingObserver += OnScp173AddingObserver;
+        }
+        public override void Disable()
+        {
+            Instance = null;
+
+            Harmony.UnpatchAll("SCP035");
+            Harmony = null;
+
+            ServerEvents.MapGenerated -= OnMapGenerated;
+
+            PlayerEvents.ChangedRole -= OnPlayerChangedRole;
+            PlayerEvents.Hurting -= OnPlayerHurting;
+
+            PlayerEvents.PickingUpItem -= OnPlayerPickingUpItem;
+            PlayerEvents.ChangedItem -= OnPlayerChangedItem;
+            PlayerEvents.UsedItem -= OnPlayerUsedItem;
+            PlayerEvents.DroppedItem -= OnPlayerDroppedItem;
+
+            PlayerEvents.Death -= OnPlayerDeath;
+
+            Scp173Events.AddingObserver -= OnScp173AddingObserver;
+        }
+
+        private void OnMapGenerated(MapGeneratedEventArgs ev) => Timing.CallDelayed(5f, () => CreateScp035Item(Room.List.First(x => x.Name == Config.Scp035ItemSpawnRooms.RandomItem()).Position + new Vector3(0, 1, 0)));
+
+        private void OnPlayerChangedRole(PlayerChangedRoleEventArgs ev)
+        {
+            if (ev.Player.GameObject.TryGetComponent<Scp035Component>(out Scp035Component scp457Component))
+                if (scp457Component.didStart)
+                    GameObject.Destroy(scp457Component);
+        }
+
+        private void OnPlayerHurting(PlayerHurtingEventArgs ev)
+        {
+            if (ev.Attacker != null && ev.Player != null)
+            {
+                if (!IsScp035(ev.Player))
+                    return;
+
+                if (ev.Attacker.Team == PlayerRoles.Team.SCPs)
+                    ev.IsAllowed = false;
+            }
+        }
+        private void OnScp173AddingObserver(Scp173AddingObserverEventArgs ev)
+        {
+            if (IsScp035(ev.Player))
+                ev.IsAllowed = false;
+        }
+
+        private void OnPlayerPickingUpItem(PlayerPickingUpItemEventArgs ev)
+        {
+            if (Scp035ItemSerials.Contains(ev.Pickup.Serial))
+                ev.Player.SendHint("<b><color=red>you picked up scp-035</color></b>", 4f);
+        }
+        private void OnPlayerChangedItem(PlayerChangedItemEventArgs ev)
+        {
+            if (ev.NewItem == null)
+                return;
+
+            if (Scp035ItemSerials.Contains(ev.NewItem.Serial))
+                ev.Player.SendHint("<b><color=red>you are holding scp-035</color></b>", 4f);
+        }
+        private void OnPlayerUsedItem(PlayerUsedItemEventArgs ev)
+        {
+            if (IsScp035(ev.Player))
+                return;
+
+            if (Scp035ItemSerials.Contains(ev.UsableItem.Serial))
+            {
+                Scp035ItemSerials.Remove(ev.UsableItem.Serial);
+                ev.Player.RemoveItem(ev.UsableItem);
+
+                RoleTypeId defaultRole = RoleTypeId.ClassD;
+
+                if (ev.Player.Team != Team.Dead)
+                    defaultRole = ev.Player.Role;
+
+                ev.Player.SetRole(defaultRole, flags: RoleSpawnFlags.None);
+                ev.Player.GameObject.AddComponent<Scp035Component>().SetPosition(ev.Player.Position);
+            }
+        }
+        private void OnPlayerDroppedItem(PlayerDroppedItemEventArgs ev)
+        {
+            if (Scp035ItemSerials.Contains(ev.Pickup.Serial))
+            {
+                LightSourceToy lightSourceToy = LightSourceToy.Create(ev.Pickup.Transform);
+                lightSourceToy.Color = Color.red;
+                lightSourceToy.Range = 0.5f;
+                lightSourceToy.Intensity = 0.1f;
+            }
+        }
+
+        private void OnPlayerDeath(PlayerDeathEventArgs ev)
+        {
+            if (!IsScp035(ev.Player))
+                return;
+
+            CreateScp035Item(ev.OldPosition);
+        }
+
+        public static bool IsScp035(Player player)
+        {
+            if (player.GameObject.GetComponent<Scp035Component>() == null)
+                return false;
+
+            return true;
+        }
+        public static bool IsScp035(ReferenceHub referenceHub)
+        {
+            if (referenceHub.GetComponent<Scp035Component>() == null)
+                return false;
+
+            return true;
+        }
+        public static void CreateScp035Item(Vector3 position)
+        {
+            Pickup scp035Pickup = Pickup.Create(ItemType.SCP268, position);
+            scp035Pickup.Spawn();
+
+            LightSourceToy lightSourceToy = LightSourceToy.Create(scp035Pickup.Transform);
+            lightSourceToy.Color = Color.red;
+            lightSourceToy.Range = 0.5f;
+            lightSourceToy.Intensity = 0.1f;
+            Scp035ItemSerials.Add(scp035Pickup.Serial);
+        }
+
+    }
+}
