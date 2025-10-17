@@ -21,7 +21,7 @@ namespace Scp035
         public override string Name => "Scp035";
         public override string Description => "Adds SCP-035 to the game.";
         public override string Author => "g18012010";
-        public override Version Version => new Version(1, 01);
+        public override Version Version => new Version(1, 02);
         public override Version RequiredApiVersion => new Version(1, 0, 0);
 
         public static List<ushort> Scp035ItemSerials = new List<ushort>();
@@ -98,11 +98,15 @@ namespace Scp035
         {
             if (ev.Attacker != null && ev.Player != null)
             {
-                if (!IsScp035(ev.Player))
-                    return;
-
-                if (ev.Attacker.Team == PlayerRoles.Team.SCPs)
-                    ev.IsAllowed = false;
+                if (IsScp035(ev.Player))
+                {
+                    if (ev.Attacker.Team == PlayerRoles.Team.SCPs)
+                        ev.IsAllowed = false;
+                }else if (IsScp035(ev.Attacker))
+                {
+                    if (ev.Player.Team == PlayerRoles.Team.SCPs)
+                        ev.IsAllowed = false;
+                }
             }
         }
         private void OnScp173AddingObserver(Scp173AddingObserverEventArgs ev)
