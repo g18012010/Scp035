@@ -111,13 +111,13 @@ namespace Scp035
         }
         private void OnScp173AddingObserver(Scp173AddingObserverEventArgs ev)
         {
-            if (IsScp035(ev.Player))
+            if (IsScp035(ev.Target))
                 ev.IsAllowed = false;
         }
 
         private void OnScp096AddingTarget(Scp096AddingTargetEventArgs ev)
         {
-            if (IsScp035(ev.Player))
+            if (IsScp035(ev.Target))
                 ev.IsAllowed = false;
         }
 
