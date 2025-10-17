@@ -16,12 +16,6 @@ namespace Scp035.Commands
 
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
-            if (sender == null) // sender is server console
-            {
-                response = "You must be on the server to use this command!";
-                return false;
-            }
-
             if (!sender.CheckPermission(PlayerPermissions.ForceclassWithoutRestrictions))
             {
                 response = "You don't have permission to use this command.";
