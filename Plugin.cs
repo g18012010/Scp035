@@ -4,8 +4,10 @@ using LabApi.Events.Arguments.Scp096Events;
 using LabApi.Events.Arguments.Scp173Events;
 using LabApi.Events.Arguments.ServerEvents;
 using LabApi.Events.Handlers;
+using LabApi.Features.Console;
 using LabApi.Features.Wrappers;
 using LabApi.Loader.Features.Plugins;
+using MapGeneration;
 using MEC;
 using PlayerRoles;
 using System;
@@ -75,7 +77,16 @@ namespace Scp035
             Scp096Events.AddingTarget -= OnScp096AddingTargets;
         }
 
-        private void OnMapGenerated(MapGeneratedEventArgs ev) => Timing.CallDelayed(5f, () => CreateScp035Item(Room.List.First(x => x.Name == Config.Scp035ItemSpawnRooms.RandomItem()).Position + new Vector3(0, 1, 0)));
+        private void OnMapGenerated(MapGeneratedEventArgs ev)
+        {
+            Timing.CallDelayed(5f, () =>
+            {
+                RoomName roomName = Config.Scp035ItemSpawnRooms.RandomItem();
+                Room randomRoom = Room.List.First(x => x.Name == roomName);
+
+                CreateScp035Item(new Vector3(randomRoom.Position.x, randomRoom.Position.y + 1, randomRoom.Position.z));
+            });
+        }
 
         private void OnPlayerChangedRole(PlayerChangedRoleEventArgs ev)
         {
