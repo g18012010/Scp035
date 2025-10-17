@@ -34,8 +34,8 @@ namespace Scp035
 
         private void Start()
         {
-            Timing.CallDelayed(1f, () => _player.MaxHealth = Plugin.Instance.Config.Health);
-            Timing.CallDelayed(1f, () => _player.Health = Plugin.Instance.Config.Health);
+            Timing.CallDelayed(0.1f, () => _player.MaxHealth = Plugin.Instance.Config.Health);
+            Timing.CallDelayed(0.1f, () => _player.Health = Plugin.Instance.Config.Health);
 
             if (_spawnLocation == Vector3.zero)
             {
@@ -52,7 +52,7 @@ namespace Scp035
 
             _player.DisplayName = $"({_player.Nickname}) SCP-035";
 
-            _player.SendHint(Plugin.Instance.Config.Scp035Hint, 15f);
+            _player.SendHint(Plugin.Instance.Config.Scp035Hint, Plugin.Instance.Config.Scp035HintDuration);
         }
 
         private void OnDestroy()
