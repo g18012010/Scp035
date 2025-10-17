@@ -99,7 +99,7 @@ namespace Scp035
         private void OnPlayerPickingUpItem(PlayerPickingUpItemEventArgs ev)
         {
             if (Scp035ItemSerials.Contains(ev.Pickup.Serial))
-                ev.Player.SendHint("<b><color=red>you picked up scp-035</color></b>", 4f);
+                ev.Player.SendHint(Config.Scp035ItemPickedUpHint, 4f);
         }
         private void OnPlayerChangedItem(PlayerChangedItemEventArgs ev)
         {
@@ -107,7 +107,7 @@ namespace Scp035
                 return;
 
             if (Scp035ItemSerials.Contains(ev.NewItem.Serial))
-                ev.Player.SendHint("<b><color=red>you are holding scp-035</color></b>", 4f);
+                ev.Player.SendHint(Config.Scp035ItemChangedHint, 4f);
         }
         private void OnPlayerUsedItem(PlayerUsedItemEventArgs ev)
         {
