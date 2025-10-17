@@ -151,6 +151,9 @@ namespace Scp035
         }
         private void OnPlayerDroppedItem(PlayerDroppedItemEventArgs ev)
         {
+            if (ev.Pickup == null)
+                return;
+
             if (Scp035ItemSerials.Contains(ev.Pickup.Serial))
             {
                 LightSourceToy lightSourceToy = LightSourceToy.Create(ev.Pickup.Transform);
