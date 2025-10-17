@@ -4,7 +4,6 @@ using LabApi.Events.Arguments.Scp096Events;
 using LabApi.Events.Arguments.Scp173Events;
 using LabApi.Events.Arguments.ServerEvents;
 using LabApi.Events.Handlers;
-using LabApi.Features.Console;
 using LabApi.Features.Wrappers;
 using LabApi.Loader.Features.Plugins;
 using MapGeneration;
@@ -22,7 +21,7 @@ namespace Scp035
         public override string Name => "Scp035";
         public override string Description => "Adds SCP-035 to the game.";
         public override string Author => "g18012010";
-        public override Version Version => new Version(1, 0);
+        public override Version Version => new Version(1, 01);
         public override Version RequiredApiVersion => new Version(1, 0, 0);
 
         public static List<ushort> Scp035ItemSerials = new List<ushort>();
@@ -51,7 +50,7 @@ namespace Scp035
 
             Scp173Events.AddingObserver += OnScp173AddingObserver;
 
-            Scp096Events.AddingTarget += OnScp096AddingTargets;
+            Scp096Events.AddingTarget += OnScp096AddingTarget;
         }
         public override void Disable()
         {
@@ -74,7 +73,7 @@ namespace Scp035
 
             Scp173Events.AddingObserver -= OnScp173AddingObserver;
 
-            Scp096Events.AddingTarget -= OnScp096AddingTargets;
+            Scp096Events.AddingTarget -= OnScp096AddingTarget;
         }
 
         private void OnMapGenerated(MapGeneratedEventArgs ev)
@@ -112,7 +111,7 @@ namespace Scp035
                 ev.IsAllowed = false;
         }
 
-        private void OnScp096AddingTargets(Scp096AddingTargetEventArgs ev)
+        private void OnScp096AddingTarget(Scp096AddingTargetEventArgs ev)
         {
             if (IsScp035(ev.Player))
                 ev.IsAllowed = false;
