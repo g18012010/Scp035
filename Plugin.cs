@@ -2,6 +2,7 @@
 using LabApi.Events.Arguments.PlayerEvents;
 using LabApi.Events.Arguments.Scp096Events;
 using LabApi.Events.Arguments.Scp173Events;
+using LabApi.Events.Arguments.Scp3114Events;
 using LabApi.Events.Arguments.ServerEvents;
 using LabApi.Events.Handlers;
 using LabApi.Features.Wrappers;
@@ -51,6 +52,8 @@ namespace Scp035
             Scp173Events.AddingObserver += OnScp173AddingObserver;
 
             Scp096Events.AddingTarget += OnScp096AddingTarget;
+
+            Scp3114Events.StrangleStarting += OnScp3114StrangleStarting;
         }
         public override void Disable()
         {
@@ -74,6 +77,8 @@ namespace Scp035
             Scp173Events.AddingObserver -= OnScp173AddingObserver;
 
             Scp096Events.AddingTarget -= OnScp096AddingTarget;
+
+            Scp3114Events.StrangleStarting -= OnScp3114StrangleStarting;
         }
 
         private void OnMapGenerated(MapGeneratedEventArgs ev)
@@ -116,6 +121,12 @@ namespace Scp035
         }
 
         private void OnScp096AddingTarget(Scp096AddingTargetEventArgs ev)
+        {
+            if (IsScp035(ev.Target))
+                ev.IsAllowed = false;
+        }
+
+        private void OnScp3114StrangleStarting(Scp3114StrangleStartingEventArgs ev)
         {
             if (IsScp035(ev.Target))
                 ev.IsAllowed = false;
