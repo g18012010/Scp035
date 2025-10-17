@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using LabApi.Events.Arguments.PlayerEvents;
+using LabApi.Events.Arguments.Scp096Events;
 using LabApi.Events.Arguments.Scp173Events;
 using LabApi.Events.Arguments.ServerEvents;
 using LabApi.Events.Handlers;
@@ -47,6 +48,8 @@ namespace Scp035
             PlayerEvents.Death += OnPlayerDeath;
 
             Scp173Events.AddingObserver += OnScp173AddingObserver;
+
+            Scp096Events.AddingTarget += OnScp096AddingTargets;
         }
         public override void Disable()
         {
@@ -68,15 +71,17 @@ namespace Scp035
             PlayerEvents.Death -= OnPlayerDeath;
 
             Scp173Events.AddingObserver -= OnScp173AddingObserver;
+
+            Scp096Events.AddingTarget -= OnScp096AddingTargets;
         }
 
         private void OnMapGenerated(MapGeneratedEventArgs ev) => Timing.CallDelayed(5f, () => CreateScp035Item(Room.List.First(x => x.Name == Config.Scp035ItemSpawnRooms.RandomItem()).Position + new Vector3(0, 1, 0)));
 
         private void OnPlayerChangedRole(PlayerChangedRoleEventArgs ev)
         {
-            if (ev.Player.GameObject.TryGetComponent<Scp035Component>(out Scp035Component scp457Component))
-                if (scp457Component.didStart)
-                    GameObject.Destroy(scp457Component);
+            if (ev.Player.GameObject.TryGetComponent<Scp035Component>(out Scp035Component scp035Component))
+                if (scp035Component.didStart)
+                    GameObject.Destroy(scp035Component);
         }
 
         private void OnPlayerHurting(PlayerHurtingEventArgs ev)
@@ -91,6 +96,12 @@ namespace Scp035
             }
         }
         private void OnScp173AddingObserver(Scp173AddingObserverEventArgs ev)
+        {
+            if (IsScp035(ev.Player))
+                ev.IsAllowed = false;
+        }
+
+        private void OnScp096AddingTargets(Scp096AddingTargetEventArgs ev)
         {
             if (IsScp035(ev.Player))
                 ev.IsAllowed = false;

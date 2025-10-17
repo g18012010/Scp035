@@ -9,7 +9,7 @@ namespace Scp035.Patches
         public static void Prefix(UsableItem __instance, ref float hpMultiplier)
         {
             if (Plugin.IsScp035(__instance.Owner))
-                hpMultiplier = hpMultiplier / Plugin.Instance.Config.DividedRegenerationAmount;
+                hpMultiplier /= Plugin.Instance.Config.DividedRegenerationAmount;
         }
     }
 }
