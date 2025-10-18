@@ -38,9 +38,11 @@ namespace Scp035
             Harmony.PatchAll();
 
             ServerEvents.MapGenerated += OnMapGenerated;
+            ServerEvents.RoundEndingConditionsCheck += OnRoundEndingConditionsCheck;
 
             PlayerEvents.ChangedRole += OnPlayerChangedRole;
             PlayerEvents.Hurting += OnPlayerHurting;
+            PlayerEvents.Escaping += OnEscaping;
 
             PlayerEvents.PickingUpItem += OnPlayerPickingUpItem;
             PlayerEvents.ChangedItem += OnPlayerChangedItem;
@@ -63,9 +65,11 @@ namespace Scp035
             Harmony = null;
 
             ServerEvents.MapGenerated -= OnMapGenerated;
+            ServerEvents.RoundEndingConditionsCheck -= OnRoundEndingConditionsCheck;
 
             PlayerEvents.ChangedRole -= OnPlayerChangedRole;
             PlayerEvents.Hurting -= OnPlayerHurting;
+            PlayerEvents.Escaping -= OnEscaping;
 
             PlayerEvents.PickingUpItem -= OnPlayerPickingUpItem;
             PlayerEvents.ChangedItem -= OnPlayerChangedItem;
@@ -92,11 +96,28 @@ namespace Scp035
             });
         }
 
+        private void OnRoundEndingConditionsCheck(RoundEndingConditionsCheckEventArgs ev)
+        {
+            if(Round.ScpTargetsAmount == 1)
+            {
+                Player lastAlive = Player.List.First(x => x.IsAlive && !x.IsSCP);
+
+                if (IsScp035(lastAlive))
+                    ev.CanEnd = true;
+            }
+        }
+
         private void OnPlayerChangedRole(PlayerChangedRoleEventArgs ev)
         {
             if (ev.Player.GameObject.TryGetComponent<Scp035Component>(out Scp035Component scp035Component))
                 if (scp035Component.didStart)
                     GameObject.Destroy(scp035Component);
+        }
+
+        private void OnEscaping(PlayerEscapingEventArgs ev)
+        {
+            if (IsScp035(ev.Player))
+                ev.IsAllowed = false;
         }
 
         private void OnPlayerHurting(PlayerHurtingEventArgs ev)
