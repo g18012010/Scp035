@@ -103,11 +103,11 @@ namespace Scp035
         {
             if (ev.Attacker != null && ev.Player != null)
             {
-                if (IsScp035(ev.Player))
+                if (ev.Player.IsScp035())
                 {
                     if (ev.Attacker.Team == PlayerRoles.Team.SCPs)
                         ev.IsAllowed = false;
-                }else if (IsScp035(ev.Attacker))
+                }else if (ev.Attacker.IsScp035())
                 {
                     if (ev.Player.Team == PlayerRoles.Team.SCPs)
                         ev.IsAllowed = false;
@@ -116,19 +116,19 @@ namespace Scp035
         }
         private void OnScp173AddingObserver(Scp173AddingObserverEventArgs ev)
         {
-            if (IsScp035(ev.Target))
+            if (ev.Player.IsScp035())
                 ev.IsAllowed = false;
         }
 
         private void OnScp096AddingTarget(Scp096AddingTargetEventArgs ev)
         {
-            if (IsScp035(ev.Target))
+            if (ev.Player.IsScp035())
                 ev.IsAllowed = false;
         }
 
         private void OnScp3114StrangleStarting(Scp3114StrangleStartingEventArgs ev)
         {
-            if (IsScp035(ev.Target))
+            if (ev.Player.IsScp035())
                 ev.IsAllowed = false;
         }
 
@@ -147,7 +147,7 @@ namespace Scp035
         }
         private void OnPlayerUsedItem(PlayerUsedItemEventArgs ev)
         {
-            if (IsScp035(ev.Player))
+            if (ev.Player.IsScp035())
                 return;
 
             if (Scp035ItemSerials.Contains(ev.UsableItem.Serial))
@@ -180,19 +180,12 @@ namespace Scp035
 
         private void OnPlayerDeath(PlayerDeathEventArgs ev)
         {
-            if (!IsScp035(ev.Player))
+            if (!ev.Player.IsScp035())
                 return;
 
             CreateScp035Item(ev.OldPosition);
         }
 
-        public static bool IsScp035(Player player)
-        {
-            if (player.GameObject.GetComponent<Scp035Component>() == null)
-                return false;
-
-            return true;
-        }
         public static bool IsScp035(ReferenceHub referenceHub)
         {
             if (referenceHub.GetComponent<Scp035Component>() == null)
