@@ -116,19 +116,19 @@ namespace Scp035
         }
         private void OnScp173AddingObserver(Scp173AddingObserverEventArgs ev)
         {
-            if (ev.Player.IsScp035())
+            if (ev.Target.IsScp035())
                 ev.IsAllowed = false;
         }
 
         private void OnScp096AddingTarget(Scp096AddingTargetEventArgs ev)
         {
-            if (ev.Player.IsScp035())
+            if (ev.Target.IsScp035())
                 ev.IsAllowed = false;
         }
 
         private void OnScp3114StrangleStarting(Scp3114StrangleStartingEventArgs ev)
         {
-            if (ev.Player.IsScp035())
+            if (ev.Target.IsScp035())
                 ev.IsAllowed = false;
         }
 
@@ -186,13 +186,6 @@ namespace Scp035
             CreateScp035Item(ev.OldPosition);
         }
 
-        public static bool IsScp035(ReferenceHub referenceHub)
-        {
-            if (referenceHub.GetComponent<Scp035Component>() == null)
-                return false;
-
-            return true;
-        }
         public static void CreateScp035Item(Vector3 position)
         {
             Pickup scp035Pickup = Pickup.Create(ItemType.SCP268, position);
