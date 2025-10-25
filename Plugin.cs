@@ -39,6 +39,7 @@ namespace Scp035
 
             ServerEvents.MapGenerated += OnMapGenerated;
             ServerEvents.RoundEndingConditionsCheck += OnRoundEndingConditionsCheck;
+            ServerEvents.RoundEnding += OnRoundEnding;
 
             PlayerEvents.ChangedRole += OnPlayerChangedRole;
             PlayerEvents.Hurting += OnPlayerHurting;
@@ -66,6 +67,7 @@ namespace Scp035
 
             ServerEvents.MapGenerated -= OnMapGenerated;
             ServerEvents.RoundEndingConditionsCheck -= OnRoundEndingConditionsCheck;
+            ServerEvents.RoundEnding -= OnRoundEnding;
 
             PlayerEvents.ChangedRole -= OnPlayerChangedRole;
             PlayerEvents.Hurting -= OnPlayerHurting;
@@ -99,6 +101,17 @@ namespace Scp035
             });
         }
 
+        private void OnRoundEnding(RoundEndingEventArgs ev)
+        {
+            if(Player.List.Count(x => x.IsAlive) == 1)
+            {
+                if(Player.List.First(x => x.IsAlive && IsScp035(x)) != null)
+                {
+                    ev.LeadingTeam = RoundSummary.LeadingTeam.Anomalies;
+                }
+            }
+        }
+
         private void OnRoundEndingConditionsCheck(RoundEndingConditionsCheckEventArgs ev)
         {
             if(Round.ScpTargetsAmount == 1)
@@ -107,6 +120,13 @@ namespace Scp035
 
                 if (IsScp035(lastAlive))
                     ev.CanEnd = true;
+            }
+            if(Player.List.Where(x => x.IsAlive).All(x => x.Faction == Faction.FoundationEnemy) && Player.List.Where(x => x.IsAlive).Count() > 1)
+            {
+                if(Player.List.Any(x => x.IsAlive && IsScp035(x)))
+                {
+                    ev.CanEnd = false;
+                }
             }
         }
 
@@ -179,12 +199,7 @@ namespace Scp035
                 Scp035ItemSerials.Remove(ev.UsableItem.Serial);
                 ev.Player.RemoveItem(ev.UsableItem);
 
-                RoleTypeId defaultRole = RoleTypeId.ClassD;
-
-                if (ev.Player.Team != Team.Dead)
-                    defaultRole = ev.Player.Role;
-
-                ev.Player.SetRole(defaultRole, flags: RoleSpawnFlags.None);
+                ev.Player.SetRole(RoleTypeId.Tutorial, flags: RoleSpawnFlags.None);
                 ev.Player.GameObject.AddComponent<Scp035Component>().SetPosition(ev.Player.Position);
             }
         }
