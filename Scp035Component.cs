@@ -38,8 +38,6 @@ namespace Scp035
             Timing.CallDelayed(0.1f, () => _player.MaxHealth = Plugin.Instance.Config.Health);
             Timing.CallDelayed(0.1f, () => _player.Health = Plugin.Instance.Config.Health);
 
-            _player.EnableEffect<NightVision>(255);
-
             if (_spawnLocation == Vector3.zero)
             {
                 Vector3 roomPosition = Room.Dictionary.FirstOrDefault(x => x.Key.Name == MapGeneration.RoomName.Hcz049).Value.Position;
