@@ -76,6 +76,7 @@
     <Compile Include="Commands\Scp035Command.cs" />
     <Compile Include="Scp035Component.cs" />
     <Compile Include="Commands\SpawnMaskCommand.cs" />
+    <Compile Include="SpawnProperties.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

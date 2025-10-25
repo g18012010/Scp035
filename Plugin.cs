@@ -89,10 +89,13 @@ namespace Scp035
         {
             Timing.CallDelayed(5f, () =>
             {
-                RoomName roomName = Config.Scp035ItemSpawnRooms.RandomItem();
-                Room randomRoom = Room.List.First(x => x.Name == roomName);
+                if(Config.SpawnProperties.StaticPosition == Vector3.zero)
+                {
+                    RoomName randomRoomName = Config.SpawnProperties.SpawnRooms.RandomItem();
 
-                CreateScp035Item(new Vector3(randomRoom.Position.x, randomRoom.Position.y + 1, randomRoom.Position.z));
+                    CreateScp035Item(Room.List.First(x => x.Name == randomRoomName).Position + new Vector3(0, 1, 0));
+                } else
+                    CreateScp035Item(Config.SpawnProperties.StaticPosition);
             });
         }
 
