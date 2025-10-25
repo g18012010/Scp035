@@ -1,5 +1,4 @@
-﻿using CustomPlayerEffects;
-using LabApi.Features.Wrappers;
+﻿using LabApi.Features.Wrappers;
 using MEC;
 using System.Linq;
 using UnityEngine;

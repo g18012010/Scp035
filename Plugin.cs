@@ -22,7 +22,7 @@ namespace Scp035
         public override string Name => "Scp035";
         public override string Description => "Adds SCP-035 to the game.";
         public override string Author => "g18012010";
-        public override Version Version => new Version(1, 03);
+        public override Version Version => new Version(1, 1);
         public override Version RequiredApiVersion => new Version(1, 0, 0);
 
         public static List<ushort> Scp035ItemSerials = new List<ushort>();
