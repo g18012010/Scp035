@@ -15,5 +15,6 @@ namespace Scp035
         {
             SpawnRooms = new RoomName[] { RoomName.Hcz049, RoomName.Hcz079, RoomName.Hcz106 }
         };
+        public float Scp035ItemDropChance { get; set; } = 50f;
     }
 }

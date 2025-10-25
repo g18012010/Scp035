@@ -222,7 +222,8 @@ namespace Scp035
             if (!IsScp035(ev.Player))
                 return;
 
-            CreateScp035Item(ev.OldPosition);
+            if(UnityEngine.Random.Range(0, 100) <= Config.Scp035ItemDropChance)
+                CreateScp035Item(ev.OldPosition);
         }
 
         public static bool IsScp035(Player player)
