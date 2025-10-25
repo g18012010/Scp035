@@ -121,7 +121,7 @@ namespace Scp035
                 if (IsScp035(lastAlive))
                     ev.CanEnd = true;
             }
-            if(Player.List.Where(x => x.IsAlive).All(x => x.Faction == Faction.FoundationEnemy) && Player.List.Where(x => x.IsAlive).Count() > 1)
+            if(Player.List.Where(x => x.IsAlive).All(x => x.IsHuman) && Player.List.Where(x => x.IsAlive).Count() > 1)
             {
                 if(Player.List.Any(x => x.IsAlive && IsScp035(x)))
                 {

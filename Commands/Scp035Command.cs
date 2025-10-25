@@ -40,12 +40,7 @@ namespace Scp035.Commands
                 return false;
             }
 
-            RoleTypeId defaultRole = RoleTypeId.ClassD;
-
-            if(player.Team != Team.Dead)
-                defaultRole = player.Role;
-
-            player.SetRole(defaultRole, flags: RoleSpawnFlags.None);
+            player.SetRole(RoleTypeId.Tutorial, flags: RoleSpawnFlags.None);
             player.GameObject.AddComponent<Scp035Component>();
 
             response = "Successfully executed.";
