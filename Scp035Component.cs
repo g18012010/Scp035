@@ -1,4 +1,5 @@
-﻿using LabApi.Features.Wrappers;
+﻿using CustomPlayerEffects;
+using LabApi.Features.Wrappers;
 using MEC;
 using System.Linq;
 using UnityEngine;
@@ -36,6 +37,7 @@ namespace Scp035
         {
             Timing.CallDelayed(0.1f, () => _player.MaxHealth = Plugin.Instance.Config.Health);
             Timing.CallDelayed(0.1f, () => _player.Health = Plugin.Instance.Config.Health);
+            Timing.CallDelayed(0.1f, () => _player.EnableEffect<NightVision>());
 
             if (_spawnLocation == Vector3.zero)
             {
