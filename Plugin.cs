@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using CustomPlayerEffects;
+using HarmonyLib;
 using LabApi.Events.Arguments.PlayerEvents;
 using LabApi.Events.Arguments.Scp096Events;
 using LabApi.Events.Arguments.Scp173Events;
@@ -40,10 +41,12 @@ namespace Scp035
             ServerEvents.MapGenerated += OnMapGenerated;
             ServerEvents.RoundEndingConditionsCheck += OnRoundEndingConditionsCheck;
             ServerEvents.RoundEnding += OnRoundEnding;
+            ServerEvents.RoomLightChanged += OnRoomLightChanged;
 
             PlayerEvents.ChangedRole += OnPlayerChangedRole;
             PlayerEvents.Hurting += OnPlayerHurting;
             PlayerEvents.Escaping += OnEscaping;
+            PlayerEvents.RoomChanged += OnPlayerRoomChanged;
 
             PlayerEvents.PickingUpItem += OnPlayerPickingUpItem;
             PlayerEvents.ChangedItem += OnPlayerChangedItem;
@@ -68,10 +71,12 @@ namespace Scp035
             ServerEvents.MapGenerated -= OnMapGenerated;
             ServerEvents.RoundEndingConditionsCheck -= OnRoundEndingConditionsCheck;
             ServerEvents.RoundEnding -= OnRoundEnding;
+            ServerEvents.RoomLightChanged -= OnRoomLightChanged;
 
             PlayerEvents.ChangedRole -= OnPlayerChangedRole;
             PlayerEvents.Hurting -= OnPlayerHurting;
             PlayerEvents.Escaping -= OnEscaping;
+            PlayerEvents.RoomChanged -= OnPlayerRoomChanged;
 
             PlayerEvents.PickingUpItem -= OnPlayerPickingUpItem;
             PlayerEvents.ChangedItem -= OnPlayerChangedItem;
@@ -158,6 +163,29 @@ namespace Scp035
                 }
             }
         }
+
+        private void OnPlayerRoomChanged(PlayerRoomChangedEventArgs ev)
+        {
+            if (ev.NewRoom.AllLightControllers.Any(x => !x.LightsEnabled))
+                ev.Player.EnableEffect<NightVision>(255);
+            else if (ev.NewRoom.AllLightControllers.Any(x => x.LightsEnabled))
+                ev.Player.DisableEffect<NightVision>();
+        }
+
+        private void OnRoomLightChanged(RoomLightChangedEventArgs ev)
+        {
+            if (!ev.NewState)
+            {
+                if (ev.Room.Players.Any(x => IsScp035(x)))
+                    ev.Room.Players.First(x => IsScp035(x)).EnableEffect<NightVision>(255);
+            }
+            else
+            {
+                foreach (var player in ev.Room.Players)
+                    player.DisableEffect<NightVision>();
+            }
+        }
+
         private void OnScp173AddingObserver(Scp173AddingObserverEventArgs ev)
         {
             if (IsScp035(ev.Target))

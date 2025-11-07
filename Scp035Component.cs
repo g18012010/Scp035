@@ -37,7 +37,6 @@ namespace Scp035
         {
             Timing.CallDelayed(0.1f, () => _player.MaxHealth = Plugin.Instance.Config.Health);
             Timing.CallDelayed(0.1f, () => _player.Health = Plugin.Instance.Config.Health);
-            Timing.CallDelayed(0.1f, () => _player.EnableEffect<NightVision>(30));
 
             if (_spawnLocation == Vector3.zero)
             {
