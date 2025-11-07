@@ -17,6 +17,7 @@ scp035_item_picked_up_hint: <b><color=red>You picked up SCP-035.</color></b>
 scp035_item_changed_hint: <b><color=red>You selected SCP-035.</color></b>
 scp035_hint: <b><color=red>You are SCP-035</color></b>
 scp035_hint_duration: 15
+# The mask item spawn locations
 spawn_properties:
   static_position:
     x: 0
@@ -26,6 +27,7 @@ spawn_properties:
   - Hcz049
   - Hcz079
   - Hcz106
+# The chance of mask item dropping from SCP-035 after death.
 scp035_item_drop_chance: 50
 ```
 Note: the static_position in spawn properties overrides spawn_rooms when it is set to anything other than 0.
