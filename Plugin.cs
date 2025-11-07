@@ -166,6 +166,9 @@ namespace Scp035
 
         private void OnPlayerRoomChanged(PlayerRoomChangedEventArgs ev)
         {
+            if (ev.NewRoom == null)
+                return;
+
             if (ev.NewRoom.AllLightControllers.Any(x => !x.LightsEnabled))
                 ev.Player.EnableEffect<NightVision>(255);
             else if (ev.NewRoom.AllLightControllers.Any(x => x.LightsEnabled))
@@ -174,6 +177,9 @@ namespace Scp035
 
         private void OnRoomLightChanged(RoomLightChangedEventArgs ev)
         {
+            if (ev.Room == null)
+                return;
+
             if (!ev.NewState)
             {
                 if (ev.Room.Players.Any(x => IsScp035(x)))
